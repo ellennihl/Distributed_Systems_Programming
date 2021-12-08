@@ -33,9 +33,9 @@ public class FileSyncClient implements Serializable {
 	public void addFile(File f) {
 		files.add(f);
 	}
-
+	//Det är nåt fel med iterator!!!!!!!!!!!!!!!!! det e därför min return e konstig
 	public String toString() {
-		String ret = "";
+		/*String ret = "";
 		int i = 0;
 		Iterator<File> fileIt = files.iterator();
 		while (fileIt.hasNext()) {
@@ -43,7 +43,10 @@ public class FileSyncClient implements Serializable {
 			ret = ret + "File " + i++ + ": \nfileName="
 			+ f.getName() + "mod=" + f.lastModified() + "size=" + f.length() + "\n";
 		}
-		return ret;
+		return ret;*/
+		
+		return "fileName="
+			+ fileName + "mod=" + modifiedDate + "size=" + sizeBytes + "\n";
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
