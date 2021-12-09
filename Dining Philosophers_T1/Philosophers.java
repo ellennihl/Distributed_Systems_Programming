@@ -29,11 +29,18 @@ public class Philosophers {
 		}
 		System.out.println("All philosophers finished dining.");
 	}
-
+/**
+* A philosopher can eat, think and wait, and can only pick up a fork if the fork is not already picked up.
+*/
 	static class Philosopher extends Thread {
 		private final Object leftFork, rightFork;
 		private final int id;
-
+		/**
+		 * 
+		 * @param id		identifier of philosopher
+		 * @param leftFork	the left fork of the philosopher
+		 * @param rightFork	the right fork of the philosopher
+		 */
 		public Philosopher(int id, Object leftFork, Object rightFork) {
 			this.id = id;
 			this.leftFork = leftFork;
