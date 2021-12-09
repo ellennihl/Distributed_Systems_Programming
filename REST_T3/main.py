@@ -1,4 +1,5 @@
-#inspiuterd by https://www.youtube.com/watch?v=GMppyAPbLYk
+#Created by Eek de Bruijckere and Ellen Nihl 09-12-2021
+#inspired by https://www.youtube.com/watch?v=GMppyAPbLYk
 
 from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
