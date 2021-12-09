@@ -1,4 +1,4 @@
-//Eek de Bruijckere, Ellen Nhil.
+// Created by Eek de Bruijckere and Ellen Nihl 09-12-2021
 
 package internet_chat_service;
 
@@ -6,11 +6,16 @@ import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
 
+/**
+* A Server can establish connections between multiple Clients, by spawning one thread per Client, and creates a chat service for them 
+* where they can exchange messages to each other. A Client can start a private chat with another Client by typing "/private [name]" and "/leave" to leave 
+* the private chat. A superuser has the authority to kick out other users by the command "/kick [name]".
+*/
 public class Server {
 	public static final int PORT = 7897;
 	public static ArrayList<Connection> connectedServices; //List of connected clients
 	public static ArrayList<PrivateChat> privateSessions; //List of private sessions
-	public static final String[] adminList = {"Eek","eek","Ellen", "ellen"}; //the admin usernames
+	public static final String[] adminList = {"Eek","eek","Ellen", "ellen", "Wojciech", "wojciech"}; //the admin usernames
 	
 	public static void main(String args[]) {
 		try {
@@ -29,8 +34,8 @@ public class Server {
 	
 	/**
 	 * 
-	 * @param ms message to be sent to all clients connected the server
-	 * @param username the user sending the ms.
+	 * @param ms 	message to be sent to all clients connected the server
+	 * @param username   the user sending the message.
 	 * This function broadcasts a message to all clients connected to the server
 	 */
 	public static void broadcast(String ms, String username) {
@@ -52,7 +57,12 @@ public class Server {
 			}
 		}
 	}
-	
+	/**
+	 * 
+	 * @param ms 	message to be sent to the user's private chat
+	 * @param username    the user sending the message.
+	 * This function broadcasts a message to the user's private chat.
+	 */
 	public static void privateBroadcast(String ms, String user) {
 		for(PrivateChat p : privateSessions) {
 			try {
@@ -66,6 +76,12 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param ms 	message from a superuser that wants to kick another user.
+	 * @param username    the user sending the message.
+	 * This function kicks out the user specified in the message if the user exist.
+	 */
 	public static void kickUser(String ms, String user) {
 		
 		String split[] = ms.split(" ");
@@ -84,6 +100,12 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param ms 	message sent by the user
+	 * @param username    the user sending the message.
+	 * This function creates a private chat with the user specified in its message, if the user exist.
+	 */
 	public static Connection privateChat(String ms, String user) {
 		
 		String split[] = ms.split(" ");
@@ -99,12 +121,14 @@ public class Server {
 				}
 			}
 		}
-		//if user is not in the list broadkast it.
+		//if user is not in the list, broadcast it.
 		Server.broadcast(ms, user);
 		return null;
 	}
 }
-
+/**
+* A Connection establishes a connection between a Client and the Server, and handles the messages sent by the client.
+*/
 class Connection extends Thread {
 	DataInputStream in;
 	DataOutputStream out;
@@ -221,6 +245,9 @@ class Connection extends Thread {
 	}
 }
 
+/*
+* PrivateChat connects two users.
+*/
 class PrivateChat{
 	static Connection user1;
 	static Connection user2;
