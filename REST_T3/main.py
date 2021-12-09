@@ -19,13 +19,12 @@ def abort_if_number_not(number):
 class Primes(Resource):
 	def get(self,number):
 		abort_if_number_not(number)
-		return numbers[number]
+		return {number : numbers[number]}
 
 	def put(self,number):
 		args = number_put_args.parse_args()
 		numbers[number] = args
-		return numbers[number], 201
-
+		return {number : numbers[number]}, 201
 
 api.add_resource(Primes, "/prime/<int:number>")
 
