@@ -36,7 +36,7 @@ public class Client {
 				
 				out.writeUTF(send);
 				
-				if(send.equals("stop")) {
+				if(send.equals("/stop")) {
 					catcher.interrupt();
 					catcher.join();
 					break;
@@ -76,10 +76,10 @@ class Catcher extends Thread{
 		try {
 			while(!interrupted()) {
 				String input = in.readUTF();
-				if(input.equals("stop")) {
+				if(input.equals("/stop")) {
 					System.out.println("you have been kicked from the server");
 					Client.kicked = true;
-					out.writeUTF("stop");
+					out.writeUTF("/stop");
 					break;
 				}
 				System.out.println(input);
