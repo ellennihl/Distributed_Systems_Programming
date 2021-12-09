@@ -1,0 +1,7 @@
+T1 - Group 6
+
+This is a lab where we finished an existing code to learn about java concurrency programming by solving the dining philosophers problem. 
+
+We implemented the start, interrupt and join to make threads run in parallel and synchronize so that one thread can access the resource at a given point in time. However, deadlocks can still occur in this case. To solve the deadlock problem one of the philosophers is taking the left fork first and right second where all others are taking the right first.
+
+To run the code it is just to press run and when you are done press enter on the command line and the threads will join and the code will stop.
