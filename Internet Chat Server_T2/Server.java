@@ -75,7 +75,7 @@ public class Server {
 		for(Connection t : connectedServices) {
 			if(split[1].equals(t.username)) {
 				try {
-					t.getOut().writeUTF("stop");
+					t.getOut().writeUTF("/stop");
 					t.interrupt();
 				} catch (IOException e) {
 					e.printStackTrace();
