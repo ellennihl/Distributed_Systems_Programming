@@ -1,9 +1,15 @@
+// Created by Eek de Bruijckere and Ellen Nihl 09-12-2021
 package internet_chat_service;
 
 import java.net.*;
 import java.util.*;
 import java.io.*;
 
+/**
+* A Client establishes a connection to a Server and spawns a thread that handles the receiving messages from the Server. 
+* The user can create messages in the command line and send the messages to the Server which distributes the messages to
+* all the other Clients.
+*/
 public class Client {
 	
 	static volatile boolean kicked = false;
@@ -19,7 +25,7 @@ public class Client {
 			DataInputStream in = new DataInputStream(s.getInputStream());
 			DataOutputStream out = new DataOutputStream(s.getOutputStream());
 			
-			//Say hallo to server by sending the username
+			//Say hello to server by sending the username
 			out.writeUTF(username);
 			
 			//start a thread that catches sent data
@@ -63,7 +69,9 @@ public class Client {
 		}
 	}
 }
-
+/**
+* Catcher handles the messages sent by the Server.
+*/
 class Catcher extends Thread{
 	DataInputStream in;
 	DataOutputStream out;
@@ -71,7 +79,9 @@ class Catcher extends Thread{
 		in = input;
 		out = output;
 	}
-	
+	/**
+	* The thread handles the messages sent by the server until the user types "/stop", then the thread is terminated.
+	*/
 	public void run() {
 		try {
 			while(!interrupted()) {
