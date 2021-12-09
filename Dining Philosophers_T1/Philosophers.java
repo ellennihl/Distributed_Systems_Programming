@@ -1,5 +1,7 @@
-package Lab1;
+/** Created by Eek de Bruicjkere and Ellen Nihl 09-12-2021
+*/
 
+package Lab1;
 public class Philosophers {
 	private static int NUM_PHIL = 5;
 
