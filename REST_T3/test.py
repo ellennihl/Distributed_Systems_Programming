@@ -20,3 +20,7 @@ if(response.status_code == 404):
     print("Add new item")
     response = requests.put(BASE + "prime/" + str(number), {'isPrime' : temp})
 print(response.json())
+if(response.json()[str(number)]["isPrime"] == 1):
+    print(str(number) + " is prime")
+else:
+    print(str(number) + " is not prime")
