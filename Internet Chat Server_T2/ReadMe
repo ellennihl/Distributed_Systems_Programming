@@ -1,0 +1,21 @@
+T2 - Group 6
+
+This is a concurrent client-server program for an Internet multi-party chat service using the TCP protocol. A user can run a client connecting to the server and send messages to it. The user’s messages are broadcasted to all other clients. There are other features like private chat, that lets you chat with another user and no one else. If you are an admin you can kick people. You can log out and then a message will be sent that you left the server.
+
+How to use the program:
+
+Server
+Start the server and let it run. Do this before starting a client.
+
+Client
+When you run the client first write your name. Names that are admins are Eek, eek, Ellen, ellen, Wojciech, wojciech.
+Then you are in the chat where you can chat with other connected clients.
+Commands in the chat
+/stop 		Leave the server.
+/private x	Create a private chat with x.
+/leave		If you are in a private chat you go back to the main chat.
+/kick x		If you are admin you kick x from the server.
+
+To do/improvements
+You can make it so just one person with the same name can be on the server at a time.
+Make a bigger private session so more than 2 people can chat in private.
