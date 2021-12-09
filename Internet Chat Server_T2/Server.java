@@ -9,7 +9,7 @@ import java.io.*;
 /**
 * A Server can establish connections between multiple Clients, by spawning one thread per Client, and creates a chat service for them 
 * where they can exchange messages to each other. A Client can start a private chat with another Client by typing "/private [name]" and "/leave" to leave 
-* the private chat. A superuser has the authority to kick out other users by the command "/kick [name]".
+* the private chat. A admin has the authority to kick out other users by the command "/kick [name]".
 */
 public class Server {
 	public static final int PORT = 7897;
@@ -78,7 +78,7 @@ public class Server {
 	
 	/**
 	 * 
-	 * @param ms 	message from a superuser that wants to kick another user.
+	 * @param ms 	message from a admin that wants to kick another user.
 	 * @param username    the user sending the message.
 	 * This function kicks out the user specified in the message if the user exist.
 	 */
