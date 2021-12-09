@@ -1,3 +1,5 @@
+//Eek de Bruijckere, Ellen Nhil.
+
 package internet_chat_service;
 
 import java.net.*;
@@ -137,16 +139,16 @@ class Connection extends Thread {
 				String input = in.readUTF();
 				
 				//Client wants to disconnect
-				if(input.equals("stop")) {
+				if(input.equals("/stop")) {
 					break;
 				}
 				
 				//check if admin wants to kick someone
-				if(admin && input.contains("kick")) {
+				if(admin && input.contains("/kick")) {
 					Server.kickUser(input, username);
 				}
 				
-				if(input.contains("private") && !inPrivate) {
+				if(input.contains("/private") && !inPrivate) {
 					Connection t = Server.privateChat(input, username);
 					if(t != null) {
 						PrivateChat o = new PrivateChat(this,t);
