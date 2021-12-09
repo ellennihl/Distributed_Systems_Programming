@@ -10,7 +10,7 @@ public class Server {
 	public static final int PORT = 7897;
 	public static ArrayList<Connection> connectedServices; //List of connected clients
 	public static ArrayList<PrivateChat> privateSessions; //List of private sessions
-	public static final String[] adminList = {"Eek","eek","Eejk"}; //the admin usernames
+	public static final String[] adminList = {"Eek","eek","Ellen", "ellen"}; //the admin usernames
 	
 	public static void main(String args[]) {
 		try {
