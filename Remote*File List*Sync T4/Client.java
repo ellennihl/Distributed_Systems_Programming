@@ -2,12 +2,12 @@ package Task4;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Client{
@@ -29,8 +29,12 @@ public class Client{
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-		FileObj objs[] = getFileObjFromDict("C:\\Users\\Eek\\eclipse-workspace\\Distributed Systems\\src");
-       
+		FileObj objs[] = getFileObjFromDict("C:\\Users\\Eek\\OneDrive\\Skrivbord\\katt");
+		ArrayList<FileObj> files = new ArrayList<FileObj>();
+		ArrayList<FileObj> newfiles = new ArrayList<FileObj>();
+		for (FileObj fileObj : objs) {
+			files.add(fileObj);
+		}
 		//inte spara ner
 		/*ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("user.dat"));
 		for (FileObj fileObj : objs) {
@@ -43,13 +47,17 @@ public class Client{
 
 		try {
 			client = new Socket("127.0.0.1", 8888);
-			out = new ObjectOutputStream(client.getOutputStream());
 			in = new ObjectInputStream(client.getInputStream());
+			out = new ObjectOutputStream(client.getOutputStream());
 			
-			for (FileObj fileObj : objs) {
-				out.writeObject(fileObj);
+			out.writeObject(files);
+			//out.flush();
+			
+			newfiles = (ArrayList<FileObj>)in.readObject();
+			System.out.println("Things to backup : ");
+			for (FileObj f : newfiles) {
+				System.out.println(f);
 			}
-			out.flush();
 			
 			//close resources
 			out.close();
