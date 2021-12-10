@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
 
-public class FileObj implements Serializable, Comparable<FileObj>{
+public class FileObj implements Serializable{
 
 	private static final long serialVersionUID = -7837545380407702492L;
 	
@@ -90,12 +90,4 @@ public class FileObj implements Serializable, Comparable<FileObj>{
         	System.exit(1);
         	}
         }
-
-	@Override
-	public int compareTo(FileObj o) {
-		
-		if(this.name.equals(o.name))
-			return 0;
-		return 0;
-	}
 }
