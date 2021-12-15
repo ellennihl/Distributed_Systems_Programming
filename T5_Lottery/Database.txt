@@ -1,0 +1,2 @@
+{"gmail": "Eejk@gmail.com", "bets": [{"date": "2020-05-17 14:00:00", "numbers": [9, 10, 11, 12]}]}
+{"gmail": "Eek@gmail.com", "bets": [{"date": "2020-05-17 14:00:00", "numbers": [9, 10, 11, 12]}]}
