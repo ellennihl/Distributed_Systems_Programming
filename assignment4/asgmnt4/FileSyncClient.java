@@ -49,8 +49,7 @@ public class FileSyncClient {
 
 		FileSyncClient fsc = new FileSyncClient();
 
-		File dir = new File("C:\\Users\\ellen\\eclipse-workspace\\Distributed Systems" + 
-		" Programming\\src\\asgmnt4\\files");
+		File dir = new File("files");//put the files in the same project folder
 		File[] dirContents = dir.listFiles();
 		if (dirContents != null) {
 		  for (File child : dirContents) {
