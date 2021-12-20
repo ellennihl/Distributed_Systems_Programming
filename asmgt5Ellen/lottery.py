@@ -3,24 +3,28 @@ import json
 import datetime
 
 BASE = "http://127.0.0.1:5000/"
-name = "ellen"
-#response = requests.get(BASE + "lottery/" + name)
-#if(response.status_code == 404):
-    #temp = isPrime(number)
-#    print("Add new item")
-#{"ellen": {"email": "garigax148@wolfpat.com", "numbers": {10,9,8,7,6,5,4}}
-nums1 = [1,2,3,4,5]
-nums2 = [6,7]
-#date = datetime.datetime.now().isoformat(timespec='seconds')
-date1 = datetime.datetime(2021, 12, 19, 16, 47).isoformat(timespec='minutes')
-date2 = datetime.datetime(2021, 12, 19, 16, 48).isoformat(timespec='minutes')
-response = requests.post(BASE + "lottery/leif", data = {"email" : 'nazaqibe@onekisspresave.com', "numbers": nums1, "date": date1})#, "date": str(datetime.datetime.now())})
-#response = requests.post(BASE + "lottery/pelle", data={"email" : "pelle.gmai", "numbers": 4})
-response = requests.post(BASE + "lottery/ellen", data={"email" : 'garigax148@wolfpat.com', "numbers": nums2, "date": date2})
 
+date1 = datetime.datetime(2021, 12, 21, 0, 58).isoformat(timespec='minutes')
+date2 = datetime.datetime(2021, 12, 21, 0, 59).isoformat(timespec='minutes')
+date3 = datetime.datetime(2021, 12, 21, 1, 0).isoformat(timespec='minutes')
+date4 = datetime.datetime(2021, 12, 21, 1, 1).isoformat(timespec='minutes')
+
+bet1 = [{"date": date1, "nums": [7,4,3]},
+        {"date": date2, "nums": [8,9,10]},
+        {"date": date3, "nums": [1,2]},
+        {"date": date4, "nums": [1,2,3,4,5,6,7]}]
+bet2 = [{"date": date1, "nums": [1,2,3,4,5,6,7]},
+        {"date": date2, "nums": [8]},
+        {"date": date3, "nums": [3,7]},
+        {"date": date4, "nums": [1,2,3,4,5,6,7]}]
+
+#these are tempotary emails, you can get one at: https://temp-mail.org/
+response = requests.post(BASE + "lottery/leif", data = json.dumps({"email" : 'nazaqibe@onekisspresave.com', "bets": bet1}))
+response = requests.post(BASE + "lottery/ellen", data = json.dumps({"email" : 'garigax148@wolfpat.com', "bets": bet2}))
+
+#response = requests.post(BASE + "lottery/leif", data = json.dumps({"email" : 'nazaqibe@onekisspresave.com', "numbers": nums3, "date": date4}))
+#response = requests.post(BASE + "lottery/leif", data = {"email" : 'nazaqibe@onekisspresave.com', "numbers": nums1, "date": date1})#, "date": str(datetime.datetime.now())})
+#response = requests.post(BASE + "lottery/leif", data = {"email" : 'nazaqibe@onekisspresave.com', "numbers": nums2, "date": date2})
+#response = requests.post(BASE + "lottery/leif", data = {"email" : 'nazaqibe@onekisspresave.com', "numbers": nums1, "date": date3})
 
 #print(response.json())
-#if(response.json()[str(number)]["isPrime"] == 1):
-#    print(str(number) + " is prime")
-#else:
-#    print(str(number) + " is not prime")
