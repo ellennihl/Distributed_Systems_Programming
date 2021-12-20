@@ -1,8 +1,9 @@
 #Created by Eek de Bruijckere and Ellen Nihl 16-12-2021
 #inspired by https://www.youtube.com/watch?v=GMppyAPbLYk
 #the email part is inspired by https://pythonbasics.org/flask-mail/
+#the user request is inspired by https://jdhao.github.io/2021/04/08/send_complex_data_in_python_requests/
 
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
@@ -12,10 +13,12 @@ import time
 import threading
 import random
 import datetime
+import json
 
 participants = {}
-pool = 0#dela upp pools så att det är en pool per datum TOOOOOOOOOOOOOOOOOOOOOOOODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+pool = {}
 winners = {}
+finishDateStr = ""
 
 app = Flask(__name__)
 api = Api(app)
@@ -30,32 +33,12 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_MAX_EMAILS'] = 5
 mail = Mail(app)
 
-#@app.route("/mail/<string:winner>")
-#def index():
-#    global winners
-#    msg = Message('Hello', sender = 'group6assignment5@gmail.com', recipients = [winners[winner]["email"]])
-#    msg.body = "Hello Flask message sent from Flask-Mail"
-#    mail.send(msg)
-#    return "Sent"
-
-partic_post_args = reqparse.RequestParser()
-partic_post_args.add_argument("email", type=str, help="Email of participant", required=True)
-partic_post_args.add_argument("numbers", type=int, action='append', help="Enter your numbers", required=True)#testa att ha kvar int när jag skickar lista
-partic_post_args.add_argument("date", type=str, help="Enter your numbers", required=True)#testa att ha kvar int när jag skickar lista
-#OMG DET VAR APPEND SOM FIXADE DET...........................................................
-#vanlig lista [] i post då
-#fixa 100kr för varje bet
-#flera datum. inte lista av datum. ett post för varje datum. men flera nummer för varje post.
-#retrieve historic periodic data
-#you are only allowed to post a specific number ONCE
-#man ska kunna skicka ett datum i framtiden som det gäller för
-
 class Mail(Resource):
 
     def get(self,name):
         global winners
         msg = Message('WINNER', sender = 'group6assignment5@gmail.com', recipients = [winners[name]["email"]])
-        msg.body = "Congratulations! You won " + str(winners[name]["pool"]) + " kr! \nKind regards,\nEllen and Eek"
+        msg.body = "Congratulations! You won " + str(winners[name][finishDateStr]["pool"]) + " kr! \nKind regards,\nEllen and Eek"
         mail.send(msg)
         return "Sent"
 
@@ -65,19 +48,29 @@ class Lottery(Resource):
         global winners, participants
         if(name=="winners"):
             return winners
+        if(name=="all"):
+            return participants
         else:
             return participants[name]
 
     def post(self,name):
         global participants, pool
-        args = partic_post_args.parse_args()
-        date = datetime.datetime.strptime(args.date, '%Y-%m-%dT%H:%M')#retrieve the application date
-        if(date > datetime.datetime.now()):#and talet måste vara inom rangen
-            participants[name] = args
-            pool = pool + len(args.numbers)*100 #add 100 kr for every number
-            return participants[name], 201
-        else:
-            return "Date must be in the future", 405
+        user_request = json.loads(request.data)
+        for bets in user_request['bets']:
+            for nums in bets["nums"]:
+                if(nums not in range(1,256)):
+                    return "Numbers must be within range", 405
+            if datetime.datetime.strptime(bets["date"], '%Y-%m-%dT%H:%M') < datetime.datetime.now():
+                return "Date must be in the future", 405
+        participants[name] = user_request
+        for bets in user_request["bets"]:
+            date = bets["date"]
+            if(date in pool.keys()):
+                pool[date]["amount"] += len(bets["nums"])*100 #add 100 kr for every number
+            else:
+                pool[date] = {"amount": len(bets["nums"])*100}
+        return participants[name], 201
+
 
 api.add_resource(Lottery, "/lottery/<string:name>")
 api.add_resource(Mail, "/mail/<string:name>")
@@ -86,50 +79,65 @@ api.add_resource(Mail, "/mail/<string:name>")
 #and that the date is not expired. If we have a winner, a GET request is sent to the Server
 #and the server sends an email to the winner.
 def draw():
-    time = datetime.datetime.now() #datetime.datetime(2021, 5, 17, 14)  dt.replace(hour=11, minute=59)
-    min = time.time().minute
-    while(True):
-        min = min + 1#every hour
-        time = time.replace(minute=min)#hour=11, minute=59)#draw in an hour
-        while(datetime.datetime.now() < time):#(time + datetime.timedelta(seconds=30))):#thread is busy waiting
-            pass
-        finishDate = time#time.replace(second=time.time().second()+1)#datetime.datetime.now() + datetime.timedelta(seconds=30)#change here for time between pricesFIXAAAAAAAAAAA DEN SKA INTE UPPDATEAS
-        winningNr = random.randrange(1, 7)#change here for the range of numbers
+    while(True):#TODO FIXA SÅ ATT MINUTERNA BLIR TIMMMAR SEN SÅ DEN INTE HÅLLER PÅ O SÄGER MINUT 68LIKSOM DÅ ÄR DET JU TIMME IST
+        global participants, winners, pool, BASE, finishDateStr
+        finishDate = updateTime()
+        finishDateStr = finishDate.strftime('%Y-%m-%dT%H:%M')
+        winningNr = random.randrange(1, 7) #change here for the range of numbers
         winnersAmount = 0
-        global participants, winners, pool
-        print("winning number: ")
-        print(winningNr)
-        expired = []
+        print("winning number: " + str(winningNr))
         for key in participants:
-            date = datetime.datetime.strptime(participants[key]["date"], '%Y-%m-%dT%H:%M')#retrieve the application date
-            if(date == finishDate):#if the betting date is now
-                print("date is ok")
-                for num in participants[key]["numbers"]:
-                    print(num)
-                    if(num == winningNr):#check for winners
-                        winners[key] = participants[key]
-                        winners[key]["date"] = str(finishDate)
-                        winnersAmount = winnersAmount+1
-            elif (date < finishDate):#date is expired, remove the participant maybe send mail? TODO
-                expired.append(key)
-        if(winnersAmount>0):#if we have any winners(and ensure no div by 0)
-            pool = pool/winnersAmount
+            for bets in participants[key]["bets"]:
+                date = datetime.datetime.strptime(bets["date"], '%Y-%m-%dT%H:%M') #retrieve the application date
+                if(date == finishDate): #if the betting date is now
+                    for num in bets["nums"]:
+                        if(num == winningNr): #check for winners
+                            if(key not in winners):
+                                winners[key] = {}
+                                winners[key]["email"] = participants[key]["email"]
+                            winners[key][finishDateStr] = {"winningNr": winningNr, "pool": 0}
+                            winnersAmount = winnersAmount+1
+        if(winnersAmount>0): #if we have any winners(and ensure no div by 0)
+            poolPart = pool[finishDateStr]["amount"]/winnersAmount
+            print(winners)
             for key in winners:
-                del participants[key]#now that the participant won, moved to winners instead
-                winners[key]["pool"] = pool#add their price
-                global BASE
-                requests.get(BASE + "mail/" + str(key))#send mail
-            pool = 0
-            print("winners: " + str(winners))
+                winners[key][finishDateStr]["pool"] = poolPart #add their price
+                requests.get(BASE + "mail/" + str(key)) #send mail
+        else: #if no one won, add the current pool to the next
+            nextDateStr = nextDate(finishDate)
+            print(pool)
+            if(nextDateStr in pool.keys()): #TODO gör detta snyggare
+                if(finishDateStr in pool.keys()):
+                    pool[nextDateStr]["amount"] += pool[finishDateStr]["amount"]
+                #else: dont need to add anything
+            elif(finishDateStr in pool.keys()):
+                pool[nextDateStr] = {"amount": pool[finishDateStr]["amount"]}
+            else:
+                pool[nextDateStr] = {"amount": 0}
+            if(finishDateStr in pool.keys()):
+                pool[finishDateStr]["amount"] = 0
+            print(pool)
+        print("winners: " + str(winners))
         print("participants" + str(participants))
-        for key in expired:
-            print("ta bort " + str(participant[key]))
-            del participants[key] #remove expired participants
-        #time.sleep(10)#maybe busy wait instead?
+
+#waits for the new drawing time
+def updateTime():
+    finishDate = datetime.datetime.now()
+    finishDate += datetime.timedelta(minutes=1)
+    finishDate = finishDate.replace(second=0, microsecond=0)#hour=11, minute=59)#draw in an hour
+    print(finishDate)
+    while(datetime.datetime.now() < finishDate): #thread is busy waiting
+        pass
+    return finishDate
+
+#retrieves the next drawing time
+def nextDate(finishDate):
+    nextDate = finishDate + datetime.timedelta(minutes=1)
+    nextDateStr = nextDate.strftime('%Y-%m-%dT%H:%M')
+    return nextDateStr
 
 if __name__ == "__main__":
-    t = threading.Thread(target=draw)#spawn a thread which calls draw()
+    t = threading.Thread(target=draw) #spawn a thread which calls draw()
     t.start()
     app.run(debug=False)
     t.join()
-    print("kommer du hit")
